@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>PlayerTV</title>
+    <link rel="icon" type="image/webp" href="/static/poster/playertv.webp">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <!-- Dark mode -->
+    <div class="dark-mode-toggle-container">
+        <span class="dark-mode-toggle-label">Dark Mode:</span>
+        <label class="switch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <!-- pop up for the advance mode -->
+    <div id="configAdvModal" class="config-modal">
+        <div class="config-modal-content">
+            <span class="config-modal-close">&times;</span>
+            <h2>Advanced Settings</h2>
+
+            <div class="card-grid">
+
+                <!-- Object Detection Parameters Card -->
+                <div class="config-card">
+                    <h3>Object Detection Parameters</h3>
+                    <div class="config-item">
+                        <label for="predictor_type">Object Detection Model:</label>
+                        <select id="predictor_type">
+                            <option value="predictor_type_yolov8" selected>YOLOv8</option>
+                            <option value="predictor_type_yolov82">YOLOx</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label for="ckpt">Checkpoint:</label>
+                        <input type="text" id="ckpt" name="ckpt" value="path/to/model/weight.pt">
+                    </div>
+                    <div class="config-item">
+                        <label for="conf_thres">Confidence Threshold:</label>
+                        <input type="text" id="conf_thres" name="conf_thres" value="0.25" min="0" max="1" step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="iou_thresh">IoU Threshold:</label>
+                        <input type="text" id="iou_thresh" name="iou_thresh" value="0.7" min="0" max="1" step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="iou_nms_thres">IoU NMS Threshold:</label>
+                        <input type="number" id="iou_nms_thres" name="iou_nms_thres" value="0.7" min="0" max="1"
+                            step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="inf_img_size">Information Image Size:</label>
+                        <input type="text" id="inf_img_size" name="inf_img_size" value="[800, 1440]">
+                    </div>
+                    <div class="config-item">
+                        <label for="class_whitelist">Class Whitelist:</label>
+                        <input type="text" id="class_whitelist" name="class_whitelist" value="[0]">
+                    </div>
+                </div>
+
+                <!-- Deep EIOU Parameters Card -->
+                <div class="config-card">
+                    <h3>Deep-EIoU Parameters</h3>
+                    <div class="config-item">
+                        <label for="saveVideo">Save Video:</label>
+                        <input type="checkbox" id="saveVideo" name="saveVideo" checked>
+                    </div>
+
+                    <div class="config-item">
+                        <label for="device">Device:</label>
+                        <select id="device">
+                            <option value="gpu" selected>GPU</option>
+                            <option value="cpu">CPU</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label for="trackHighThresh">Track High Threshold:</label>
+                        <input type="number" id="trackHighThresh" name="trackHighThresh" value="0.25" min="0" max="1"
+                            step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="trackLowThresh">Track Low Threshold:</label>
+                        <input type="number" id="trackLowThresh" name="trackLowThresh" value="0.25" min="0" max="1"
+                            step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="trackBuffer">Track Buffer:</label>
+                        <input type="number" id="trackBuffer" name="trackBuffer" value="0.25" min="0" max="1"
+                            step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="matchThresh">Match Threshold:</label>
+                        <input type="number" id="matchThresh" name="matchThresh" value="0.25" min="0" max="1"
+                            step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="aspectRatioThresh">Aspect Ratio Threshold:</label>
+                        <input type="number" id="aspectRatioThresh" name="aspectRatioThresh" value="0.25" min="0"
+                            max="1" step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="minBoxArea">Min Box Area:</label>
+                        <input type="number" id="minBoxArea" name="minBoxArea" value="0.25" min="0" max="1" step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="nmsThresh">NMS Threshold:</label>
+                        <input type="number" id="nmsThresh" name="nmsThresh" value="0.25" min="0" max="1" step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="proximity_thresh">Proximity Threshold:</label>
+                        <input type="number" id="proximity_thresh" name="proximity_thresh" value="0.25" min="0" max="1"
+                            step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="appearance_thresh">Appearance Threshold:</label>
+                        <input type="number" id="appearance_thresh" name="appearance_thresh" value="0.25" min="0"
+                            max="1" step="0.01">
+                    </div>
+                    <div class="config-item">
+                        <label for="frame_skip">Frame Skip:</label>
+                        <input type="number" id="frame_skip" name="frame_skip" value="1" step="1">
+                    </div>
+                </div>
+
+                <!-- OCR Parameters Card -->
+                <div class="config-card">
+                    <h3>OCR Parameters</h3>
+                    <div class="config-item">
+                        <label for="which_OCR">OCR Method:</label>
+                        <select id="which_OCR">
+                            <option value="which_OCR_easyocr" selected>EasyOCR</option>
+                            <option value="which_OCR_Paddle">Paddle</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label for="lang_lsit">Language List:</label>
+                        <input type="text" id="lang_lsit" name="lang_lsit" value="en">
+                    </div>
+                    <div class="config-item">
+                        <label for="sample_rate">Sample Rate</label>
+                        <input type="number" id="sample_rate" name="sample_rate" value="30" min="1" max="100" step="1">
+                    </div>
+                    <div class="config-item">
+                        <label for="stop_at_detection">Stop at Detection:</label>
+                        <input type="checkbox" id="stop_at_detection" name="stop_at_detection" checked>
+                    </div>
+
+                    <div class="config-item">
+                        <label for="num_of_tume_zones">Number of Time Zones:</label>
+                        <input type="number" id="num_of_tume_zones" name="num_of_tume_zones" value="5" min="1" max="10"
+                            step="1">
+                    </div>
+                </div>
+
+                <!-- RGB Parameters Card -->
+                <div class="config-card">
+                    <h3>RGB Parameters</h3>
+
+                    <div class="config-item">
+                        <label for="RGB_metrics_dropdown">RGB Metric:</label>
+                        <select id="RGB_metrics_dropdown">
+                            <option value="RGB_metrics_dropdown_Cielab" selected>Cielab</option>
+                            <option value="RGB_metrics_dropdown_weighted_rgb_metric">Weighted RGB Metric</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label for="cluster_method">Cluster Method:</label>
+                        <select id="cluster_method">
+                            <option value="cluster_method_kmeans" selected>KMeans</option>
+                            <option value="cluster_method_kmeans2">Kmeans2</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label for="distance_metric">Distance Metric:</label>
+                        <select id="distance_metric">
+                            <option value="distance_metric_weighted_rgb" selected>Weighted RGB</option>
+                            <option value="distance_metric_weighted_rgb2">Weighted RGB2</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label for="scoring_function">Scoring Function:</label>
+                        <select id="scoring_function">
+                            <option value="scoring_function_brisque" selected>Brisque</option>
+                            <option value="scoring_function_brisque2">Brisque2</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label for="offset_y_top">Offset y-top:</label>
+                        <input type="number" id="offset_y_top" name="offset_y_top" value="0.25" min="0" max="1"
+                            step="0.1">
+                    </div>
+                    <div class="config-item">
+                        <label for="offset_y_bot">Offset y-bottom:</label>
+                        <input type="number" id="offset_y_bot" name="offset_y_bot" value="0.5" min="0" max="1"
+                            step="0.1">
+                    </div>
+                    <div class="config-item">
+                        <label for="offset_x_left">Offset x-left:</label>
+                        <input type="number" id="offset_x_left" name="offset_x_left" value="0.33" min="0" max="1"
+                            step="0.1">
+                    </div>
+                    <div class="config-item">
+                        <label for="offset_x_right">Offset x-right:</label>
+                        <input type="number" id="offset_x_right" name="offset_x_right" value="0.33" min="0" max="1"
+                            step="0.1">
+                    </div>
+                    <div class="config-item">
+                        <label for="crop_score_function">Crop Score Function:</label>
+                        <select id="crop_score_function">
+                            <option value="iou_score" selected>IoU Score</option>
+                            <option value="iou_score2">IOU score2</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Version Badge -->
+    <div id="versionBadge">v0.4</div>
+    <div id="JersyContainer" style="display: none">
+        <div id="leftImagesContainer">
+            <div class="image-title">Selected Team:</div>
+            <div class="image-box" id="boxLeftTeam">
+                <div class="image-title" style="text-align: left;">Home Kit</div>
+                <img src="/static/teams_jersy/placeholder.png" alt="Left Image" id="leftTeamImage" />
+            </div>
+
+            <div class="image-box" id="boxLeftTeam2">
+                <div class="image-title" style="text-align: left;">Away Kit</div>
+                <img src="/static/teams_jersy/placeholder.png" alt="Left Image" id="leftTeamImage2" />
+            </div>
+        </div>
+
+        <div class="image-box" id="boxRightTeam">
+            <div class="image-title">Selected Player:</div>
+            <img src="/static/teams_jersy/placeholder.png" alt="Right Image" id="rightTeamImage" />
+        </div>
+    </div>
+
+
+    <div class="container title-section">
+        <h1 style="text-align: center">PlayerTV</h1>
+    </div>
+    <div class="container">
+        <div class="arrowSection">
+            <button id="accordionToggleVideo">
+                <i class="fa-solid fa-angle-down"></i>
+                <span>Step 1: Input</span>
+            </button>
+        </div>
+
+        <div class="row" id="videoSection" style="margin-top: 3%;">
+            <div class="column left">
+                <form id="videoForm" class="videoPlayerInput1">
+                    <h2 style="text-align: left">Input Video</h2>
+                    <h4 for="m3u8Input">M3U8 Playlist URL:</h4>
+                    <input type="text" id="m3u8Input" name="m3u8Url" />
+                    <button class="filter-button" type="submit">Fetch Video</button>
+                </form>
+            </div>
+            <div class="column right">
+                <div id="overlay" style="
+                                      border-radius: 10px;
+                                      display: none;
+                                      position: absolute;
+                                      background: rgba(0, 0, 0, 0.75);
+                                      color: white;
+                                      width: 98%;
+                                      height: 100%;
+                                      justify-content: center;
+                                      align-items: center;
+                                      text-align: center;
+                                    ">
+                    <h2 style="margin-top: 0%">
+                        Input video is being processed ...
+                    </h2>
+                    <img style="width: 20%" src="/static/poster/03-42-18-223_512.webp" alt="" />
+                </div>
+                <video id="videoPlayer" controls poster="/static/poster/poster.png">
+                    <source type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </div>
+    <!-- Configuration Section -->
+    <div class="container">
+        <div class="arrowSection">
+            <button id="accordionToggleVideo3">
+                <i class="fa-solid fa-angle-down"></i>
+                <span>Step 2: Configuration</span>
+            </button>
+        </div>
+
+        <!-- Container for Configuration Options -->
+        <div id="configurationSection" class="configuration-section hidden" style="margin-top: 3%;">
+            <div class="config-card">
+                <h3>Metadata</h3>
+                <div class="dropdown-box">
+                    <input type="file" id="fileInput" accept=".json" class="input-file" />
+                </div>
+                <div class="dropdown-box">
+                    <label for="teamDropdown" class="label-dropdown">Select Team:</label>
+                    <select id="teamDropdown" class="dropdown">
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+                <div class="dropdown-box">
+                    <label for="playerDropdown" class="label-dropdown">Select Player:</label>
+                    <select id="playerDropdown" class="dropdown">
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="divider">
+                <span class="divider-text">OR</span>
+            </div>
+
+            <div class="config-card">
+                <!-- The checkbox for the advance mode -->
+                <div class="config-adv-checkbox">
+                    <input type="checkbox" id="configAdvMode" name="configAdvMode">
+                    <label for="configAdvMode" class="checkmark"></label>
+                    <label for="configAdvMode" style="cursor: pointer;">
+                        <h4>Advanced Mode</h4>
+                    </label>
+                </div>
+
+                <!-- Row containing three boxes -->
+                <div class="config-row">
+                    <!-- Box 1 -->
+                    <div class="filtering-container" style="width: 100%;">
+                        <h3>RGB Metric</h3>
+                        <div class="dropdown-box">
+                            <label for="Rgb_metric" class="label-dropdown">RGB Metric:</label>
+                            <select id="Rgb_metric" class="dropdown">
+                                <option value="cielab">Cielab</option>
+                                <option value="weighted_rgb">Weighted RGB Metric</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Box 2 -->
+                    <div class="filtering-container" style="width: 100%;">
+                        <h3>OCR Method</h3>
+                        <div class="dropdown-box">
+                            <label for="which_ocr" class="label-dropdown">OCR Method:</label>
+                            <select id="which_ocr" class="dropdown">
+                                <option value="Paddle">Paddle</option>
+                                <option value="easyocr">Easy OCR</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Box 3 -->
+                    <div class="filtering-container" style="width: 100%;">
+                        <h3>Object Detection Model:</h3>
+                        <!-- Example dropdown -->
+                        <div class="dropdown-box">
+                            <label for="detector" class="label-dropdown">Object Detection Model:</label>
+                            <select id="detector" class="dropdown">
+                                <option value="yolov8">YOLOv8</option>
+                                <option value="yolox">YOLOx</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="filterButton" class="filter-button" title="Create per-player compilation.">Clip Video</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="arrowSection">
+            <button id="accordionToggleVideo2">
+                <i class="fa-solid fa-angle-down"></i>
+                <span>Step 3: Output</span>
+            </button>
+        </div>
+        <!-- Container to display filtered results -->
+        <div id="filteredResults" class="filtered-results hidden" style="margin-top: 3%; position: relative;">
+            <div id="overlay_result" style="
+                border-radius: 10px;
+                display: none;
+                position: absolute;
+                background: rgba(0, 0, 0, 0.75);
+                color: white;
+                width: 70%;
+                height: 100%;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                top: 0;
+                left: 15%;
+            ">
+                <h2 style="margin-top: 0%">
+                    Output video is being created ...
+                </h2>
+                <img style="width: 20%" src="/static/poster/03-42-18-223_512.webp" alt="" />
+            </div>
+            <video id="videoPlayer_result" controls width="640" height="360" poster="/static/poster/poster.png">
+                <source id="videoSource" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
