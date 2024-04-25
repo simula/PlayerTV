@@ -1,0 +1,97 @@
+{
+    "deep_eiou_parameters": {
+        "video_path": "../../videos/3783_afwx4di2qyfjy.mp4",
+        "save_video": true,
+        "device": "gpu",
+        "track_high_thresh": 0.6,
+        "track_low_thresh": 0.1,
+        "new_track_thresh": 0.7,
+        "track_buffer": 60,
+        "match_thresh": 0.8,
+        "aspect_ratio_thresh": 1.6,
+        "min_box_area": 10,
+        "nms_thresh": 0.7,
+        "proximity_thresh": 0.5,
+        "appearance_thresh": 0.25,
+        "frame_skip": 1
+    },
+    "predictor_params": {
+        "type": "default",
+        "params": {
+            "yolov8_params": {
+                "ckpt": "checkpoints/yolov8/medium/medhi_latest/best.pt",
+                "conf_thres": 0.25,
+                "iou_nms_thres": 0.7,
+                "inf_img_size": [800, 1440],
+                "class_whitelist": [0]
+            },
+            "default_params": {
+                "ckpt": "checkpoints/best_ckpt.pth.tar",
+                "exp_file": "tools/exp/exp.py"
+            }
+
+        }
+    },
+    "ocr_parameters":{
+        "which_ocr": "easyocr",
+        "params": {
+            "paddle_params": {
+                "use_angle_cls" : true,
+                "lang" : "en",
+                "use_gpu" : true,
+                "det_db_thresh" : 0.001,
+                "det_db_box_thresh" :  0.001,
+                "use_dilation": true,
+                "det_limit_type" : "min",
+                "show_log" : false,
+                "key_cls": "digits"
+            },
+            "easyocr_params": {
+                "lang_list" : ["en"],
+                "gpu": true
+            }
+        }
+
+    },
+    "rgb_parameters": {
+        "certain_iou_thresh": 0.1,
+        "cluster_method": "KMeans",
+        "color_space": "rgb",
+        "scoring_function": "BRISQUE",
+        "normalize": false,
+        "scale_values": false,
+        "offset_type": "center",
+        "offset": {
+            "offset_trim": {
+                "y_top": "1/4",
+                "y_bot": "1/2",
+                "x_left": "1/3",
+                "x_right": "1/3"
+            },
+            "offset_center": {
+                "area": 25,
+                "aspect_ratio": "16/9"
+            }
+        }
+    },
+    "processor_parameters": {
+        "type": "online",
+        "crop_score_function": "iou_score",
+        "ocr_score_function": "highest_in_player_list",
+        "stop_at_detection": false,
+        "decide_team_scores": "plurality_vote",
+        "params": {
+            "post": {
+                "num_of_time_zones": 5,
+                "top_n": 20,
+                "get_ocr_function": "split_into_time_zones",
+                "decide_ocr_function": "highest_in_player_list"
+            },
+            "online": {
+                "danger_zone_iou_thres": 0.5,
+                "tracklet_ocr_conf_thres": 0.5,
+                "post_process": false
+            }
+        }
+    }
+}
