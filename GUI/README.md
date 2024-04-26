@@ -9,7 +9,9 @@ This Flask web application is designed for processing soccer clips and extractin
    ```bash
    git clone https://github.com/simula/playertv
 
-2. Install the required dependencies:
+2. Navigate to the GUI folder.
+
+3. Install the required dependencies:
     ```bash
     pip install -r requirements.txt
 
