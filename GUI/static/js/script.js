@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Assuming the base path for team images
-const basePathForTeamImages = "/static/teams_jersey/";
+const basePathForTeamImages = "/static/images-team-jerseys/2023-jerseys/";
 
 // Function to update team images based on the selected team
 function updateTeamImages(selectedTeam) {
@@ -138,11 +138,11 @@ function updateTeamImages(selectedTeam) {
 }
 
 // Assuming the base path for team images
-const basePathForPlayerImages = "/static/players_image/";
+const basePathForPlayerImages = "/static/images-players/";
 
 // Function to update player images based on the selected player
-function updatePlayerImages(selectedPlayer) {
-  const plyaerImageUrl = basePathForPlayerImages + selectedPlayer + ".png";
+function updatePlayerImages(selectedPlayer, selectedTeam) {
+  const plyaerImageUrl = basePathForPlayerImages + selectedTeam + selectedPlayer + ".png";
 
   console.log(plyaerImageUrl);
   // Set the image URLs
